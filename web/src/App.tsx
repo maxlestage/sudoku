@@ -12,6 +12,7 @@ import {
   type Settings,
 } from './storage'
 import { valueColor } from './colors'
+import { THEMES, themeBg } from './themes'
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard']
 
@@ -26,6 +27,17 @@ export default function App() {
   const tr = useCallback((key: string) => t(lang, key), [lang])
 
   useEffect(() => saveSettings(settings), [settings])
+
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', themeBg(settings.theme))
+  }, [settings.theme])
 
   useEffect(() => {
     saveGame(game)
@@ -158,6 +170,20 @@ export default function App() {
               >
                 {tr(d)}
               </button>
+            ))}
+          </div>
+        </div>
+        <div className="control-row">
+          <span className="label">{tr('background')}</span>
+          <div role="group" className="theme-row">
+            {THEMES.map((th) => (
+              <button
+                key={th.id}
+                className={th.id === settings.theme ? 'swatch active' : 'swatch'}
+                style={{ background: th.bg }}
+                aria-label={th.id}
+                onClick={() => setSettings({ ...settings, theme: th.id })}
+              />
             ))}
           </div>
         </div>
