@@ -305,8 +305,8 @@ function Board({ game, mode, selected, conflicts, onSelect }: BoardProps) {
             isSel ? 'selected' : '',
             sameValue ? 'same' : '',
             conflicts[r]?.[c] ? 'conflict' : '',
-            c % bc === 0 ? 'box-left' : '',
-            r % br === 0 ? 'box-top' : '',
+            bc > 1 && c % bc === 0 ? 'box-left' : '',
+            br > 1 && r % br === 0 ? 'box-top' : '',
             c === n - 1 ? 'box-right' : '',
             r === n - 1 ? 'box-bottom' : '',
           ]

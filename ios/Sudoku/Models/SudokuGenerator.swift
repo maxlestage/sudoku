@@ -14,13 +14,14 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 }
 
 enum GridSize: Int, Codable, CaseIterable, Identifiable {
-    case four = 4, six = 6, nine = 9
+    case three = 3, six = 6, nine = 9
     var id: Int { rawValue }
 
     /// Box dimensions (rows, cols).
+    /// 3×3 is a mini latin square: its 1×3 boxes coincide with the rows.
     var boxDims: (rows: Int, cols: Int) {
         switch self {
-        case .four: return (2, 2)
+        case .three: return (1, 3)
         case .six: return (2, 3)
         case .nine: return (3, 3)
         }
