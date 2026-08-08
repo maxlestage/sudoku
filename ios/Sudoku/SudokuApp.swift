@@ -8,7 +8,6 @@ struct SudokuApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
-                .preferredColorScheme(.dark)
         }
     }
 }
