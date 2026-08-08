@@ -1,0 +1,12 @@
+"new_game" = "Nouvelle partie";
+"size" = "Taille";
+"difficulty" = "Difficulté";
+"easy" = "Facile";
+"medium" = "Moyen";
+"hard" = "Difficile";
+"display" = "Affichage";
+"digits" = "Chiffres";
+"colors" = "Couleurs";
+"loading" = "Génération…";
+"win" = "Bravo, grille terminée ! 🎉";
+"play_again" = "Rejouer";

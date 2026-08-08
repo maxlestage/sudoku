@@ -1,0 +1,265 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg: #1a1a2e;
+  --surface: #24243e;
+  --cell: #2e2e4e;
+  --cell-given: #3a3a5c;
+  --text: #eaeaea;
+  --muted: #9a9ab0;
+  --accent: #4895ef;
+  --danger: #e63946;
+  --border: #16162a;
+  --box-border: #8888aa;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  touch-action: manipulation;
+}
+
+/* Mobile-first: single column, board fills width */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 100dvh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar h1 {
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.control-row .label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.chip {
+  border: 1px solid transparent;
+  background: var(--cell);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.status {
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem 0;
+}
+
+.board {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--box-border);
+  border: 2px solid var(--box-border);
+  border-radius: 8px;
+  overflow: hidden;
+  gap: 0;
+  user-select: none;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cell);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: clamp(1rem, 5vw, 1.6rem);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.size-4 .cell {
+  font-size: clamp(1.4rem, 8vw, 2.2rem);
+}
+
+.size-6 .cell {
+  font-size: clamp(1.2rem, 6vw, 1.9rem);
+}
+
+.cell.given {
+  background: var(--cell-given);
+  font-weight: 700;
+}
+
+.cell.box-left {
+  border-left: 2px solid var(--box-border);
+}
+
+.cell.box-top {
+  border-top: 2px solid var(--box-border);
+}
+
+.cell.box-right {
+  border-right: 2px solid var(--box-border);
+}
+
+.cell.box-bottom {
+  border-bottom: 2px solid var(--box-border);
+}
+
+.cell.selected {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  z-index: 1;
+}
+
+.cell.same {
+  background: #35507a;
+}
+
+.cell.conflict {
+  color: var(--danger);
+}
+
+.cell.conflict .color-dot {
+  outline: 3px solid var(--danger);
+  outline-offset: 2px;
+}
+
+.color-dot {
+  display: block;
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 30%;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+}
+
+.key {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--cell);
+  border-radius: 10px;
+  min-height: 52px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.key:active {
+  background: var(--accent);
+}
+
+.key .color-dot {
+  width: 26px;
+}
+
+.key.erase {
+  grid-column: span 2;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.primary,
+.secondary {
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--cell);
+}
+
+.new-game {
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+}
+
+.win {
+  text-align: center;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* Larger screens: center content, cap board size */
+@media (min-width: 700px) {
+  .app {
+    max-width: 560px;
+    padding-top: 1.5rem;
+  }
+
+  .keypad {
+    grid-template-columns: repeat(11, 1fr);
+  }
+
+  .key.erase {
+    grid-column: span 2;
+  }
+}
