@@ -1,0 +1,15 @@
+{
+  "name": "sudoku",
+  "description": "Random sudoku (4×4, 6×6, 9×9) with digits or colors — React web + Rust/Axum/SeaORM/SQLite backend",
+  "buildpacks": [
+    { "url": "heroku/nodejs" },
+    { "url": "emk/rust" }
+  ],
+  "env": {
+    "DATABASE_PATH": {
+      "description": "SQLite file path (ephemeral on Heroku dynos — the web client keeps its own state in localStorage)",
+      "value": "sudoku.db",
+      "required": false
+    }
+  }
+}
