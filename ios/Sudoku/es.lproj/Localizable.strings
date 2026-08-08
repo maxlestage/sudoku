@@ -1,0 +1,12 @@
+"new_game" = "Nueva partida";
+"size" = "Tamaño";
+"difficulty" = "Dificultad";
+"easy" = "Fácil";
+"medium" = "Medio";
+"hard" = "Difícil";
+"display" = "Visualización";
+"digits" = "Números";
+"colors" = "Colores";
+"loading" = "Generando…";
+"win" = "¡Enhorabuena, sudoku completado! 🎉";
+"play_again" = "Jugar otra vez";

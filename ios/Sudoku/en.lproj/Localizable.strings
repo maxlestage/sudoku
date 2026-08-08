@@ -1,0 +1,12 @@
+"new_game" = "New game";
+"size" = "Size";
+"difficulty" = "Difficulty";
+"easy" = "Easy";
+"medium" = "Medium";
+"hard" = "Hard";
+"display" = "Display";
+"digits" = "Digits";
+"colors" = "Colors";
+"loading" = "Generating…";
+"win" = "Well done, puzzle solved! 🎉";
+"play_again" = "Play again";
