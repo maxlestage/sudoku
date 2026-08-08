@@ -22,23 +22,43 @@ final class GameStore: ObservableObject {
     @AppStorage("displayMode") var displayModeRaw: String = DisplayMode.digits.rawValue
     @AppStorage("gridSize") var gridSizeRaw: Int = GridSize.nine.rawValue
     @AppStorage("difficulty") var difficultyRaw: String = Difficulty.medium.rawValue
+    @AppStorage("theme") var themeRaw: String = "midnight"
 
     private let gameKey = "sudoku.game.v1"
     private let api = APIClient()
 
+    // @AppStorage persists to UserDefaults but does not reliably notify views
+    // from inside an ObservableObject, so the setters publish explicitly.
     var displayMode: DisplayMode {
         get { DisplayMode(rawValue: displayModeRaw) ?? .digits }
-        set { displayModeRaw = newValue.rawValue }
+        set {
+            objectWillChange.send()
+            displayModeRaw = newValue.rawValue
+        }
     }
 
     var gridSize: GridSize {
         get { GridSize(rawValue: gridSizeRaw) ?? .nine }
-        set { gridSizeRaw = newValue.rawValue }
+        set {
+            objectWillChange.send()
+            gridSizeRaw = newValue.rawValue
+        }
     }
 
     var difficulty: Difficulty {
         get { Difficulty(rawValue: difficultyRaw) ?? .medium }
-        set { difficultyRaw = newValue.rawValue }
+        set {
+            objectWillChange.send()
+            difficultyRaw = newValue.rawValue
+        }
+    }
+
+    var theme: AppTheme {
+        get { AppTheme.named(themeRaw) }
+        set {
+            objectWillChange.send()
+            themeRaw = newValue.id
+        }
     }
 
     init() {

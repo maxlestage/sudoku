@@ -34,6 +34,7 @@ struct BoardView: View {
                                 conflict: conflicts[r][c],
                                 sameAsSelected: isSameAsSelected(r: r, c: c),
                                 mode: store.displayMode,
+                                theme: store.theme,
                                 size: cell
                             )
                             .overlay(boxBorders(r: r, c: c, n: n))
@@ -44,7 +45,7 @@ struct BoardView: View {
             }
             .frame(width: side, height: side)
             .overlay(
-                Rectangle().stroke(Color(white: 0.6), lineWidth: 2)
+                Rectangle().stroke(store.theme.boxBorder, lineWidth: 2)
             )
             .frame(maxWidth: .infinity)
         }
@@ -71,7 +72,7 @@ struct BoardView: View {
                     path.addLine(to: CGPoint(x: geo.size.width, y: 0))
                 }
             }
-            .stroke(Color(white: 0.6), lineWidth: 2)
+            .stroke(store.theme.boxBorder, lineWidth: 2)
         }
         .allowsHitTesting(false)
     }
@@ -84,6 +85,7 @@ struct CellView: View {
     let conflict: Bool
     let sameAsSelected: Bool
     let mode: DisplayMode
+    let theme: AppTheme
     let size: CGFloat
 
     var body: some View {
@@ -103,22 +105,20 @@ struct CellView: View {
                         .font(.system(size: size * 0.5,
                                       weight: given ? .bold : .medium,
                                       design: .rounded))
-                        .foregroundColor(conflict ? .red : .white)
+                        .foregroundColor(conflict ? .red : theme.text)
                 }
             }
         }
         .frame(width: size, height: size)
-        .border(Color(red: 0.09, green: 0.09, blue: 0.16), width: 0.5)
+        .border(theme.bg, width: 0.5)
     }
 
     private var background: some View {
-        let base: Color = given
-            ? Color(red: 0.23, green: 0.23, blue: 0.36)
-            : Color(red: 0.18, green: 0.18, blue: 0.30)
+        let base: Color = given ? theme.cellGiven : theme.cell
         return Rectangle()
-            .fill(sameAsSelected ? Color(red: 0.21, green: 0.31, blue: 0.48) : base)
+            .fill(sameAsSelected ? theme.same : base)
             .overlay(
-                Rectangle().stroke(selected ? Color.blue : .clear, lineWidth: 3)
+                Rectangle().stroke(selected ? theme.accent : .clear, lineWidth: 3)
             )
     }
 }
