@@ -7,6 +7,6 @@
     "node": "22.x"
   },
   "scripts": {
-    "heroku-postbuild": "npm --prefix web ci && npm --prefix web run build"
+    "heroku-postbuild": "npm --prefix web ci --include=dev && npm --prefix web run build"
   }
 }
