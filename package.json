@@ -1,0 +1,12 @@
+{
+  "name": "sudoku",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Build orchestrator for Heroku: compiles the React web app before the Rust buildpack builds the server.",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "heroku-postbuild": "npm --prefix web ci && npm --prefix web run build"
+  }
+}
