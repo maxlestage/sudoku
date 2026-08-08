@@ -153,7 +153,8 @@ final class GameStore: ObservableObject {
 
     private func restore() {
         guard let data = UserDefaults.standard.data(forKey: gameKey),
-              let g = try? JSONDecoder().decode(GameState.self, from: data) else { return }
+              let g = try? JSONDecoder().decode(GameState.self, from: data),
+              [3, 6, 9].contains(g.puzzle.size) else { return }
         game = g
     }
 }
