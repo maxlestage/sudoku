@@ -63,11 +63,11 @@ struct BoardView: View {
         let bc = game.puzzle.boxCols
         return GeometryReader { geo in
             Path { path in
-                if c % bc == 0 {
+                if bc > 1 && c % bc == 0 {
                     path.move(to: .zero)
                     path.addLine(to: CGPoint(x: 0, y: geo.size.height))
                 }
-                if r % br == 0 {
+                if br > 1 && r % br == 0 {
                     path.move(to: .zero)
                     path.addLine(to: CGPoint(x: geo.size.width, y: 0))
                 }

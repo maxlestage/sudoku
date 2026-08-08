@@ -37,7 +37,10 @@ export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
     if (!raw) return fallback
-    return { ...fallback, ...JSON.parse(raw) }
+    const s: Settings = { ...fallback, ...JSON.parse(raw) }
+    // migration: 4×4 grids were replaced by 3×3
+    if (![3, 6, 9].includes(s.size)) s.size = 9
+    return s
   } catch {
     return fallback
   }
@@ -57,6 +60,8 @@ export function loadGame(): GameState | null {
     if (!raw) return null
     const g = JSON.parse(raw) as GameState
     if (!g.puzzle || !g.entries) return null
+    // migration: discard saved games from the removed 4×4 mode
+    if (![3, 6, 9].includes(g.puzzle.size)) return null
     return g
   } catch {
     return null
