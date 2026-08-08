@@ -6,6 +6,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 12) {
             header
+            themeRow
             controls
             if store.loading || store.game == nil {
                 Spacer()
@@ -26,13 +27,43 @@ struct ContentView: View {
             }
         }
         .padding(12)
-        .background(Color(red: 0.10, green: 0.10, blue: 0.18).ignoresSafeArea())
+        .background(store.theme.bg.ignoresSafeArea())
+        .tint(store.theme.accent)
+        .preferredColorScheme(store.theme.isLight ? .light : .dark)
+    }
+
+    private var themeRow: some View {
+        HStack(spacing: 10) {
+            Text(String(localized: "background"))
+                .font(.footnote)
+                .foregroundColor(store.theme.text.opacity(0.6))
+            Spacer()
+            ForEach(AppTheme.all) { theme in
+                Button {
+                    store.theme = theme
+                } label: {
+                    Circle()
+                        .fill(theme.bg)
+                        .frame(width: 26, height: 26)
+                        .overlay(
+                            Circle().stroke(
+                                theme.id == store.theme.id
+                                    ? store.theme.accent
+                                    : store.theme.boxBorder.opacity(0.6),
+                                lineWidth: theme.id == store.theme.id ? 3 : 1.5
+                            )
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 
     private var header: some View {
         HStack {
             Text("Sudoku")
                 .font(.title2.bold())
+                .foregroundColor(store.theme.text)
             Spacer()
             Picker(String(localized: "display"), selection: displayBinding) {
                 Text(String(localized: "digits")).tag(DisplayMode.digits)
@@ -65,6 +96,7 @@ struct ContentView: View {
         VStack(spacing: 10) {
             Text(String(localized: "win"))
                 .font(.headline)
+                .foregroundColor(store.theme.text)
             Button(String(localized: "play_again")) {
                 store.newGame()
             }
@@ -72,7 +104,7 @@ struct ContentView: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
-        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+        .background(store.theme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 
     private var displayBinding: Binding<DisplayMode> {

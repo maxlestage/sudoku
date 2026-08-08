@@ -5,6 +5,7 @@
 "medium" = "Medio";
 "hard" = "Difícil";
 "display" = "Visualización";
+"background" = "Fondo";
 "digits" = "Números";
 "colors" = "Colores";
 "loading" = "Generando…";
