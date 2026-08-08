@@ -11,7 +11,13 @@ export const THEMES: Theme[] = [
   { id: 'ocean', bg: '#04263b' },
   { id: 'forest', bg: '#0f2417' },
   { id: 'plum', bg: '#24122e' },
+  { id: 'crimson', bg: '#2b0f14' },
+  { id: 'slate', bg: '#1c2530' },
+  { id: 'sunset', bg: '#2a1a0a' },
+  { id: 'espresso', bg: '#211712' },
   { id: 'light', bg: '#f2f2f7' },
+  { id: 'mint', bg: '#eaf6ef' },
+  { id: 'rose', bg: '#fdf0f4' },
 ]
 
 export const DEFAULT_THEME = 'midnight'

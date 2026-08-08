@@ -1,8 +1,8 @@
 # Sudoku
 
-Sudokus aléatoires **4×4, 6×6 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
+Sudokus aléatoires **3×3, 6×6 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
 
-- **`web/`** — Site React (Vite + TypeScript), **mobile-first**, trilingue **FR / ES / EN**, **PWA installable** (service worker, hors-ligne, icônes). **6 thèmes de fond** (dont un clair) changeables à tout moment. La partie en cours et les préférences sont persistées en **localStorage** : le dyno Heroku peut redémarrer, rien n'est perdu côté joueur.
+- **`web/`** — Site React (Vite + TypeScript), **mobile-first**, trilingue **FR / ES / EN**, **PWA installable** (service worker, hors-ligne, icônes). **12 thèmes de fond** (dont 3 clairs) changeables à tout moment. La partie en cours et les préférences sont persistées en **localStorage** : le dyno Heroku peut redémarrer, rien n'est perdu côté joueur.
 - **`backend/`** — API **Rust + Axum + SeaORM + SQLite** : génération de grilles (solution unique garantie) et sauvegarde des parties (iOS ou web). Sert aussi le build du site.
 - **`ios/`** — Application **native iOS (SwiftUI)**, localisée FR / ES / EN, générateur embarqué + synchronisation avec l'API.
 
@@ -11,7 +11,7 @@ Sudokus aléatoires **4×4, 6×6 et 9×9**, affichés en **chiffres ou en couleu
 | Méthode | Route | Description |
 |---|---|---|
 | `GET` | `/api/health` | État du serveur |
-| `GET` | `/api/puzzle?size=4\|6\|9&difficulty=easy\|medium\|hard` | Grille aléatoire (solution unique) |
+| `GET` | `/api/puzzle?size=3\|6\|9&difficulty=easy\|medium\|hard` | Grille aléatoire (solution unique) |
 | `POST` | `/api/games` | Créer / mettre à jour une sauvegarde (`{id?, device_id, size, difficulty, state}`) |
 | `GET` | `/api/games?device_id=…` | Lister les sauvegardes d'un appareil |
 | `GET` | `/api/games/:id` | Lire une sauvegarde |

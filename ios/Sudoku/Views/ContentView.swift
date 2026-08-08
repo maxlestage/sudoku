@@ -33,28 +33,29 @@ struct ContentView: View {
     }
 
     private var themeRow: some View {
-        HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(String(localized: "background"))
                 .font(.footnote)
                 .foregroundColor(store.theme.text.opacity(0.6))
-            Spacer()
-            ForEach(AppTheme.all) { theme in
-                Button {
-                    store.theme = theme
-                } label: {
-                    Circle()
-                        .fill(theme.bg)
-                        .frame(width: 26, height: 26)
-                        .overlay(
-                            Circle().stroke(
-                                theme.id == store.theme.id
-                                    ? store.theme.accent
-                                    : store.theme.boxBorder.opacity(0.6),
-                                lineWidth: theme.id == store.theme.id ? 3 : 1.5
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 30), spacing: 8)], spacing: 8) {
+                ForEach(AppTheme.all) { theme in
+                    Button {
+                        store.theme = theme
+                    } label: {
+                        Circle()
+                            .fill(theme.bg)
+                            .frame(width: 26, height: 26)
+                            .overlay(
+                                Circle().stroke(
+                                    theme.id == store.theme.id
+                                        ? store.theme.accent
+                                        : store.theme.boxBorder.opacity(0.6),
+                                    lineWidth: theme.id == store.theme.id ? 3 : 1.5
+                                )
                             )
-                        )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
