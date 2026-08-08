@@ -22,6 +22,7 @@ const fr: Dict = {
   loading: 'Génération…',
   conflicts: 'Conflits affichés en rouge',
   resume: 'Partie reprise automatiquement',
+  background: 'Fond',
 }
 
 const es: Dict = {
@@ -42,6 +43,7 @@ const es: Dict = {
   loading: 'Generando…',
   conflicts: 'Conflictos en rojo',
   resume: 'Partida reanudada automáticamente',
+  background: 'Fondo',
 }
 
 const en: Dict = {
@@ -62,6 +64,7 @@ const en: Dict = {
   loading: 'Generating…',
   conflicts: 'Conflicts shown in red',
   resume: 'Game resumed automatically',
+  background: 'Background',
 }
 
 const dicts: Record<Lang, Dict> = { fr, es, en }
