@@ -11,6 +11,7 @@ export interface Settings {
   displayMode: DisplayMode
   size: Size
   difficulty: Difficulty
+  theme: string
 }
 
 export interface GameState {
@@ -31,6 +32,7 @@ export function loadSettings(): Settings {
     displayMode: 'digits',
     size: 9,
     difficulty: 'medium',
+    theme: 'midnight',
   }
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
