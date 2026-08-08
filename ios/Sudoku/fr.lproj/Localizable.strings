@@ -5,6 +5,7 @@
 "medium" = "Moyen";
 "hard" = "Difficile";
 "display" = "Affichage";
+"background" = "Fond";
 "digits" = "Chiffres";
 "colors" = "Couleurs";
 "loading" = "Génération…";
