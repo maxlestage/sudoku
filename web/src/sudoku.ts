@@ -1,5 +1,5 @@
 export type Difficulty = 'easy' | 'medium' | 'hard'
-export type Size = 4 | 6 | 9
+export type Size = 3 | 6 | 9
 
 export interface Puzzle {
   size: Size
@@ -10,12 +10,13 @@ export interface Puzzle {
   solution: number[][]
 }
 
-export const SIZES: Size[] = [4, 6, 9]
+export const SIZES: Size[] = [3, 6, 9]
 
 export function boxDims(size: Size): [number, number] {
   switch (size) {
-    case 4:
-      return [2, 2]
+    // 3×3 is a mini latin square: its 1×3 boxes coincide with the rows
+    case 3:
+      return [1, 3]
     case 6:
       return [2, 3]
     case 9:

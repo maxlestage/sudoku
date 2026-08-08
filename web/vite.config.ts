@@ -11,7 +11,7 @@ export default defineConfig({
       manifest: {
         name: 'Sudoku',
         short_name: 'Sudoku',
-        description: 'Sudokus aléatoires 4×4, 6×6, 9×9 — chiffres ou couleurs',
+        description: 'Sudokus aléatoires 3×3, 6×6, 9×9 — chiffres ou couleurs',
         lang: 'fr',
         start_url: '/',
         scope: '/',
