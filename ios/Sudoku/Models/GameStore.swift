@@ -144,7 +144,7 @@ final class GameStore: ObservableObject {
         stats = Self.load(GameStats.self, key: statsKey) ?? GameStats()
         saves = Self.load([SavedEntry].self, key: savesKey) ?? []
         if let g = Self.load(GameState.self, key: gameKey),
-           [3, 6, 9].contains(g.puzzle.size) {
+           [4, 6, 9].contains(g.puzzle.size) {
             game = g
         }
         if game == nil {
