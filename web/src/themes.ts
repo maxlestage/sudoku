@@ -20,7 +20,18 @@ export const THEMES: Theme[] = [
   { id: 'rose', bg: '#fdf0f4' },
 ]
 
-export const DEFAULT_THEME = 'midnight'
+/** 'auto' follows the system color scheme (dark ↔ light). */
+export const AUTO_THEME = 'auto'
+export const DEFAULT_THEME = AUTO_THEME
+
+const AUTO_DARK = 'midnight'
+const AUTO_LIGHT = 'light'
+
+/** Resolve the stored theme choice to a concrete theme id. */
+export function resolveTheme(choice: string, prefersDark: boolean): string {
+  if (choice === AUTO_THEME) return prefersDark ? AUTO_DARK : AUTO_LIGHT
+  return THEMES.some((t) => t.id === choice) ? choice : AUTO_DARK
+}
 
 export function themeBg(id: string): string {
   return THEMES.find((t) => t.id === id)?.bg ?? THEMES[0].bg

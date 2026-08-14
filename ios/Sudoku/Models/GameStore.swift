@@ -96,7 +96,9 @@ final class GameStore: ObservableObject {
     @AppStorage("displayMode") var displayModeRaw: String = DisplayMode.digits.rawValue
     @AppStorage("gridSize") var gridSizeRaw: Int = GridSize.nine.rawValue
     @AppStorage("difficulty") var difficultyRaw: String = Difficulty.medium.rawValue
-    @AppStorage("theme") var themeRaw: String = "midnight"
+    @AppStorage("theme") var themeRaw: String = "auto"
+    /// Mirrors the system color scheme; set by the root view.
+    @Published var systemIsDark = true
 
     private let gameKey = "sudoku.game.v1"
     private let savesKey = "sudoku.saves.v1"
@@ -132,12 +134,21 @@ final class GameStore: ObservableObject {
         }
     }
 
-    var theme: AppTheme {
-        get { AppTheme.named(themeRaw) }
+    /// The stored choice ("auto" or a theme id), for the picker's active state.
+    var themeChoice: String {
+        get { themeRaw }
         set {
             objectWillChange.send()
-            themeRaw = newValue.id
+            themeRaw = newValue
         }
+    }
+
+    /// Resolved theme: "auto" follows the system dark/light scheme.
+    var theme: AppTheme {
+        if themeRaw == "auto" {
+            return AppTheme.named(systemIsDark ? "midnight" : "light")
+        }
+        return AppTheme.named(themeRaw)
     }
 
     init() {
