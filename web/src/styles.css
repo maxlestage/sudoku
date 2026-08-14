@@ -332,8 +332,8 @@ body {
   position: relative;
 }
 
-.size-3 .cell {
-  font-size: clamp(1.6rem, 9vw, 2.6rem);
+.size-4 .cell {
+  font-size: clamp(1.4rem, 8vw, 2.2rem);
 }
 
 .size-6 .cell {

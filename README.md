@@ -1,6 +1,6 @@
 # Sudoku
 
-Sudokus aléatoires **3×3, 6×6 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
+Sudokus aléatoires **4×4, 6×6 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
 
 Fonctionnalités de jeu : **timer**, **statistiques** (parties, réussite, meilleurs temps), **mode notes** (crayon avec nettoyage automatique), **bouton indice**, **animations de victoire** (confettis) et écran **« reprendre une partie »** multi-sauvegardes (la partie en cours est mise de côté automatiquement quand on en lance une autre).
 
@@ -13,7 +13,7 @@ Fonctionnalités de jeu : **timer**, **statistiques** (parties, réussite, meill
 | Méthode | Route | Description |
 |---|---|---|
 | `GET` | `/api/health` | État du serveur |
-| `GET` | `/api/puzzle?size=3\|6\|9&difficulty=easy\|medium\|hard` | Grille aléatoire (solution unique) |
+| `GET` | `/api/puzzle?size=4\|6\|9&difficulty=easy\|medium\|hard` | Grille aléatoire (solution unique) |
 | `POST` | `/api/games` | Créer / mettre à jour une sauvegarde (`{id?, device_id, size, difficulty, state}`) |
 | `GET` | `/api/games?device_id=…` | Lister les sauvegardes d'un appareil |
 | `GET` | `/api/games/:id` | Lire une sauvegarde |
