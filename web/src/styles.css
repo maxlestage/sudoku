@@ -393,10 +393,6 @@ body,
   font-size: clamp(1.4rem, 8vw, 2.2rem);
 }
 
-.size-6 .cell {
-  font-size: clamp(1.2rem, 6vw, 1.9rem);
-}
-
 .cell.given {
   background: var(--cell-given);
   font-weight: 700;
