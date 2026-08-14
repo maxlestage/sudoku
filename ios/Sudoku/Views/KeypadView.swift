@@ -26,13 +26,6 @@ struct KeypadView: View {
                 }
                 .buttonStyle(.bordered)
             }
-            Button {
-                store.erase()
-            } label: {
-                Image(systemName: "delete.left")
-                    .frame(maxWidth: .infinity, minHeight: 48)
-            }
-            .buttonStyle(.bordered)
         }
     }
 }
