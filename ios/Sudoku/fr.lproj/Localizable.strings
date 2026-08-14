@@ -11,3 +11,17 @@
 "loading" = "Génération…";
 "win" = "Bravo, grille terminée ! 🎉";
 "play_again" = "Rejouer";
+"erase" = "Effacer";
+"notes" = "Notes";
+"hint" = "Indice";
+"stats" = "Statistiques";
+"saves" = "Parties";
+"resume_game" = "Reprendre";
+"close" = "Fermer";
+"played" = "Jouées";
+"won" = "Gagnées";
+"win_rate" = "Réussite";
+"total_time" = "Temps total";
+"hints_used" = "Indices utilisés";
+"best" = "Meilleurs temps";
+"no_saves" = "Aucune partie en attente";
