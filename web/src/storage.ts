@@ -59,7 +59,7 @@ export function loadSettings(): Settings {
     displayMode: 'digits',
     size: 9,
     difficulty: 'medium',
-    theme: 'midnight',
+    theme: 'auto',
   }
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
