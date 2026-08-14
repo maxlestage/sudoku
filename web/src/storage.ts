@@ -65,8 +65,8 @@ export function loadSettings(): Settings {
     const raw = localStorage.getItem(SETTINGS_KEY)
     if (!raw) return fallback
     const s: Settings = { ...fallback, ...JSON.parse(raw) }
-    // migration: only 4/6/9 are valid sizes (3×3 existed briefly)
-    if (![4, 6, 9].includes(s.size)) s.size = 9
+    // migration: only 4/9 are valid sizes (3×3 and 6×6 existed briefly)
+    if (![4, 9].includes(s.size)) s.size = 9
     return s
   } catch {
     return fallback
@@ -84,7 +84,7 @@ export function saveSettings(s: Settings): void {
 /** Backfill fields added after the first release so old saves keep working. */
 function migrateGame(g: GameState): GameState | null {
   if (!g.puzzle || !g.entries) return null
-  if (![4, 6, 9].includes(g.puzzle.size)) return null
+  if (![4, 9].includes(g.puzzle.size)) return null
   if (!g.notes) g.notes = emptyNotes(g.puzzle.size)
   if (typeof g.hintsUsed !== 'number') g.hintsUsed = 0
   if (typeof g.elapsedSeconds !== 'number') g.elapsedSeconds = 0

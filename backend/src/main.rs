@@ -59,7 +59,7 @@ async fn get_puzzle(Query(params): Query<PuzzleParams>) -> Result<Json<Value>, A
     let puzzle = tokio::task::spawn_blocking(move || sudoku::generate(size, difficulty))
         .await
         .map_err(|_| err(StatusCode::INTERNAL_SERVER_ERROR, "generation failed"))?
-        .ok_or_else(|| err(StatusCode::BAD_REQUEST, "size must be 4, 6 or 9"))?;
+        .ok_or_else(|| err(StatusCode::BAD_REQUEST, "size must be 4 or 9"))?;
     Ok(Json(serde_json::to_value(puzzle).unwrap()))
 }
 
