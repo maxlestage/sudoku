@@ -11,3 +11,17 @@
 "loading" = "Generando…";
 "win" = "¡Enhorabuena, sudoku completado! 🎉";
 "play_again" = "Jugar otra vez";
+"erase" = "Borrar";
+"notes" = "Notas";
+"hint" = "Pista";
+"stats" = "Estadísticas";
+"saves" = "Partidas";
+"resume_game" = "Reanudar";
+"close" = "Cerrar";
+"played" = "Jugadas";
+"won" = "Ganadas";
+"win_rate" = "Éxito";
+"total_time" = "Tiempo total";
+"hints_used" = "Pistas usadas";
+"best" = "Mejores tiempos";
+"no_saves" = "Ninguna partida pendiente";

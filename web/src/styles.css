@@ -179,6 +179,47 @@ body {
   letter-spacing: 0.05em;
 }
 
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.icon-btn {
+  background: var(--surface);
+  border: 1px solid var(--cell);
+  color: var(--text);
+  border-radius: 10px;
+  min-width: 38px;
+  min-height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.saves-btn {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
 .controls {
   display: flex;
   flex-direction: column;
@@ -246,6 +287,24 @@ body {
   text-align: center;
   color: var(--muted);
   padding: 2rem 0;
+}
+
+.game-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.25rem;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.hints-count {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .board {
@@ -328,6 +387,82 @@ body {
   border-radius: 30%;
 }
 
+/* Pencil marks */
+.notes-grid {
+  position: absolute;
+  inset: 2px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  place-items: center;
+  pointer-events: none;
+}
+
+.size-3 .notes-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.note-num {
+  font-size: clamp(0.5rem, 2.2vw, 0.75rem);
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.note-dot {
+  width: clamp(5px, 1.6vw, 9px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+/* Win animation: cascading pop across the board */
+.board.won .cell {
+  animation: cell-pop 0.55s ease both;
+  animation-delay: calc(var(--i) * 18ms);
+}
+
+@keyframes cell-pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(0.82);
+    background: var(--accent);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti span {
+  position: absolute;
+  top: -3vh;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0.9;
+    transform: translateY(108vh) rotate(calc(var(--spin) * 720deg));
+  }
+}
+
 .keypad {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -356,10 +491,27 @@ body {
   width: 26px;
 }
 
-.key.erase {
-  grid-column: span 2;
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.action {
+  flex: 1;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--cell);
+  border-radius: 10px;
+  min-height: 44px;
   font-size: 0.9rem;
-  color: var(--muted);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 .primary,
@@ -395,8 +547,179 @@ body {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
   font-size: 1.1rem;
+  animation: win-in 0.5s ease 0.4s both;
+}
+
+@keyframes win-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.win-title {
+  font-weight: 700;
+}
+
+.win-detail {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modals */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 80dvh;
+  display: flex;
+  flex-direction: column;
+  animation: modal-in 0.25s ease;
+}
+
+@keyframes modal-in {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem 0.5rem;
+}
+
+.modal-head h2 {
+  font-size: 1.1rem;
+}
+
+.modal-body {
+  padding: 0 1rem 1.25rem;
+  overflow-y: auto;
+}
+
+.modal-empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.modal-note {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.stat {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.best-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.best-list li {
+  display: flex;
+  justify-content: space-between;
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.saves-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.save-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.save-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.save-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.small {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
 }
 
 /* Larger screens: center content, cap board size */
@@ -407,10 +730,14 @@ body {
   }
 
   .keypad {
-    grid-template-columns: repeat(11, 1fr);
+    grid-template-columns: repeat(9, 1fr);
   }
 
-  .key.erase {
-    grid-column: span 2;
+  .overlay {
+    align-items: center;
+  }
+
+  .modal {
+    border-radius: 16px;
   }
 }

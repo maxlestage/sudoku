@@ -11,3 +11,17 @@
 "loading" = "Generating…";
 "win" = "Well done, puzzle solved! 🎉";
 "play_again" = "Play again";
+"erase" = "Erase";
+"notes" = "Notes";
+"hint" = "Hint";
+"stats" = "Statistics";
+"saves" = "Games";
+"resume_game" = "Resume";
+"close" = "Close";
+"played" = "Played";
+"won" = "Won";
+"win_rate" = "Win rate";
+"total_time" = "Total time";
+"hints_used" = "Hints used";
+"best" = "Best times";
+"no_saves" = "No games waiting";

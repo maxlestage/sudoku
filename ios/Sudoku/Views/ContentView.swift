@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var store: GameStore
+    @State private var showStats = false
+    @State private var showSaves = false
 
     var body: some View {
         VStack(spacing: 12) {
@@ -13,11 +15,19 @@ struct ContentView: View {
                 ProgressView(String(localized: "loading"))
                 Spacer()
             } else if let game = store.game {
-                BoardView(game: game)
+                gameBar(game)
+                ZStack {
+                    BoardView(game: game)
+                    if game.finished {
+                        ConfettiView()
+                            .allowsHitTesting(false)
+                    }
+                }
                 if game.finished {
-                    winBanner
+                    winBanner(game)
                 } else {
                     KeypadView(size: game.puzzle.size)
+                    actionsRow
                 }
                 Spacer(minLength: 0)
                 Button(String(localized: "new_game")) {
@@ -30,6 +40,108 @@ struct ContentView: View {
         .background(store.theme.bg.ignoresSafeArea())
         .tint(store.theme.accent)
         .preferredColorScheme(store.theme.isLight ? .light : .dark)
+        .sheet(isPresented: $showStats) { StatsSheet() }
+        .sheet(isPresented: $showSaves) { SavesSheet() }
+    }
+
+    private var header: some View {
+        HStack(spacing: 8) {
+            Text("Sudoku")
+                .font(.title2.bold())
+                .foregroundColor(store.theme.text)
+            Spacer()
+            Button {
+                showStats = true
+            } label: {
+                Image(systemName: "chart.bar.fill")
+            }
+            .buttonStyle(.bordered)
+            Button {
+                showSaves = true
+            } label: {
+                Image(systemName: "folder.fill")
+                    .overlay(alignment: .topTrailing) {
+                        if !store.saves.isEmpty {
+                            Text("\(store.saves.count)")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(3)
+                                .background(Circle().fill(store.theme.accent))
+                                .offset(x: 10, y: -10)
+                        }
+                    }
+            }
+            .buttonStyle(.bordered)
+        }
+    }
+
+    private func gameBar(_ game: GameState) -> some View {
+        HStack {
+            Label(formatTime(game.elapsedSeconds), systemImage: "timer")
+                .font(.subheadline.weight(.semibold).monospacedDigit())
+                .foregroundColor(store.theme.text.opacity(0.7))
+            Spacer()
+            if game.hintsUsed > 0 {
+                Label("\(game.hintsUsed)", systemImage: "lightbulb.fill")
+                    .font(.subheadline)
+                    .foregroundColor(store.theme.text.opacity(0.7))
+            }
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var actionsRow: some View {
+        HStack(spacing: 8) {
+            Button {
+                store.notesMode.toggle()
+            } label: {
+                Label(String(localized: "notes"), systemImage: "pencil")
+                    .frame(maxWidth: .infinity, minHeight: 40)
+            }
+            .buttonStyle(.bordered)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(store.notesMode ? store.theme.accent.opacity(0.35) : .clear)
+            )
+            Button {
+                store.hint()
+            } label: {
+                Label(String(localized: "hint"), systemImage: "lightbulb")
+                    .frame(maxWidth: .infinity, minHeight: 40)
+            }
+            .buttonStyle(.bordered)
+            Button {
+                store.erase()
+            } label: {
+                Label(String(localized: "erase"), systemImage: "delete.left")
+                    .frame(maxWidth: .infinity, minHeight: 40)
+            }
+            .buttonStyle(.bordered)
+        }
+    }
+
+    private func winBanner(_ game: GameState) -> some View {
+        VStack(spacing: 10) {
+            Text(String(localized: "win"))
+                .font(.headline)
+                .foregroundColor(store.theme.text)
+            HStack(spacing: 14) {
+                Label(formatTime(game.elapsedSeconds), systemImage: "timer")
+                if game.hintsUsed > 0 {
+                    Label("\(game.hintsUsed)", systemImage: "lightbulb.fill")
+                }
+            }
+            .font(.subheadline.monospacedDigit())
+            .foregroundColor(store.theme.text.opacity(0.7))
+            Button(String(localized: "play_again")) {
+                store.newGame()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(store.theme.surface, in: RoundedRectangle(cornerRadius: 12))
+        .transition(.scale.combined(with: .opacity))
     }
 
     private var themeRow: some View {
@@ -60,21 +172,6 @@ struct ContentView: View {
         }
     }
 
-    private var header: some View {
-        HStack {
-            Text("Sudoku")
-                .font(.title2.bold())
-                .foregroundColor(store.theme.text)
-            Spacer()
-            Picker(String(localized: "display"), selection: displayBinding) {
-                Text(String(localized: "digits")).tag(DisplayMode.digits)
-                Text(String(localized: "colors")).tag(DisplayMode.colors)
-            }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 190)
-        }
-    }
-
     private var controls: some View {
         VStack(spacing: 8) {
             Picker(String(localized: "size"), selection: sizeBinding) {
@@ -90,22 +187,13 @@ struct ContentView: View {
                 Text(String(localized: "hard")).tag(Difficulty.hard)
             }
             .pickerStyle(.segmented)
-        }
-    }
 
-    private var winBanner: some View {
-        VStack(spacing: 10) {
-            Text(String(localized: "win"))
-                .font(.headline)
-                .foregroundColor(store.theme.text)
-            Button(String(localized: "play_again")) {
-                store.newGame()
+            Picker(String(localized: "display"), selection: displayBinding) {
+                Text(String(localized: "digits")).tag(DisplayMode.digits)
+                Text(String(localized: "colors")).tag(DisplayMode.colors)
             }
-            .buttonStyle(.borderedProminent)
+            .pickerStyle(.segmented)
         }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(store.theme.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 
     private var displayBinding: Binding<DisplayMode> {
@@ -130,5 +218,108 @@ struct ContentView: View {
                 store.newGame()
             }
         )
+    }
+}
+
+struct StatsSheet: View {
+    @EnvironmentObject var store: GameStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    statRow(String(localized: "played"), "\(store.stats.played)")
+                    statRow(String(localized: "won"), "\(store.stats.won)")
+                    statRow(
+                        String(localized: "win_rate"),
+                        store.stats.played > 0
+                            ? "\(Int((Double(store.stats.won) / Double(store.stats.played) * 100).rounded()))%"
+                            : "0%"
+                    )
+                    statRow(String(localized: "total_time"), formatTime(store.stats.totalSeconds))
+                    statRow(String(localized: "hints_used"), "\(store.stats.hints)")
+                }
+                if !store.stats.best.isEmpty {
+                    Section(String(localized: "best")) {
+                        ForEach(store.stats.best.keys.sorted(), id: \.self) { key in
+                            let secs = store.stats.best[key] ?? 0
+                            let parts = key.split(separator: "-")
+                            let size = parts.first.map(String.init) ?? "?"
+                            let diff = parts.count > 1 ? String(parts[1]) : ""
+                            statRow(
+                                "\(size)×\(size) · \(String(localized: String.LocalizationValue(diff)))",
+                                formatTime(secs)
+                            )
+                        }
+                    }
+                }
+            }
+            .navigationTitle(String(localized: "stats"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(String(localized: "close")) { dismiss() }
+                }
+            }
+        }
+    }
+
+    private func statRow(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label)
+            Spacer()
+            Text(value).fontWeight(.semibold).monospacedDigit()
+        }
+    }
+}
+
+struct SavesSheet: View {
+    @EnvironmentObject var store: GameStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if store.saves.isEmpty {
+                    Text(String(localized: "no_saves"))
+                        .foregroundColor(.secondary)
+                } else {
+                    List {
+                        ForEach(store.saves) { entry in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    let g = entry.game
+                                    Text("\(g.puzzle.size)×\(g.puzzle.size) · \(String(localized: String.LocalizationValue(g.puzzle.difficulty.rawValue)))")
+                                        .fontWeight(.semibold)
+                                    Text("⏱ \(formatTime(g.elapsedSeconds)) · \(Int((g.progress * 100).rounded()))%")
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                        .monospacedDigit()
+                                }
+                                Spacer()
+                                Button(String(localized: "resume_game")) {
+                                    store.resume(entry)
+                                    dismiss()
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+                        }
+                        .onDelete { indexSet in
+                            for i in indexSet {
+                                store.deleteSave(store.saves[i])
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(String(localized: "saves"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(String(localized: "close")) { dismiss() }
+                }
+            }
+        }
     }
 }
