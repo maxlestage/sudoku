@@ -8,5 +8,6 @@
   },
   "scripts": {
     "heroku-postbuild": "npm --prefix web ci --include=dev && npm --prefix web run build"
-  }
+  },
+  "author": "Maxime Nathan Lestage"
 }
