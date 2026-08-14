@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var store: GameStore
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showStats = false
     @State private var showSaves = false
 
@@ -49,7 +50,13 @@ struct ContentView: View {
             .ignoresSafeArea()
         )
         .tint(store.theme.accent)
-        .preferredColorScheme(store.theme.isLight ? .light : .dark)
+        .preferredColorScheme(
+            store.themeChoice == "auto" ? nil : (store.theme.isLight ? .light : .dark)
+        )
+        .onAppear { store.systemIsDark = colorScheme == .dark }
+        .onChange(of: colorScheme) { newScheme in
+            store.systemIsDark = newScheme == .dark
+        }
         .sheet(isPresented: $showStats) { StatsSheet() }
         .sheet(isPresented: $showSaves) { SavesSheet() }
     }
@@ -160,19 +167,50 @@ struct ContentView: View {
                 .font(.footnote)
                 .foregroundColor(store.theme.text.opacity(0.6))
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 30), spacing: 8)], spacing: 8) {
+                Button {
+                    store.themeChoice = "auto"
+                } label: {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color(hex: 0x1a1a2e), location: 0.5),
+                                    .init(color: Color(hex: 0xf2f2f7), location: 0.5),
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: 26, height: 26)
+                        .overlay(
+                            Text("A")
+                                .font(.system(size: 11, weight: .heavy))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.85), radius: 2)
+                        )
+                        .overlay(
+                            Circle().stroke(
+                                store.themeChoice == "auto"
+                                    ? store.theme.accent
+                                    : store.theme.boxBorder.opacity(0.6),
+                                lineWidth: store.themeChoice == "auto" ? 3 : 1.5
+                            )
+                        )
+                }
+                .buttonStyle(.plain)
                 ForEach(AppTheme.all) { theme in
                     Button {
-                        store.theme = theme
+                        store.themeChoice = theme.id
                     } label: {
                         Circle()
                             .fill(theme.bg)
                             .frame(width: 26, height: 26)
                             .overlay(
                                 Circle().stroke(
-                                    theme.id == store.theme.id
+                                    theme.id == store.themeChoice
                                         ? store.theme.accent
                                         : store.theme.boxBorder.opacity(0.6),
-                                    lineWidth: theme.id == store.theme.id ? 3 : 1.5
+                                    lineWidth: theme.id == store.themeChoice ? 3 : 1.5
                                 )
                             )
                     }

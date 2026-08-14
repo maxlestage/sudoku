@@ -23,7 +23,7 @@ import {
   type Stats,
 } from './storage'
 import { valueColor, VALUE_COLORS } from './colors'
-import { THEMES, themeBg } from './themes'
+import { AUTO_THEME, resolveTheme, THEMES, themeBg } from './themes'
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard']
 
@@ -54,6 +54,18 @@ export default function App() {
   const lang: Lang = settings.lang ?? detectLang()
   const tr = useCallback((key: string) => t(lang, key), [lang])
 
+  // System dark/light preference, tracked live for the "auto" theme.
+  const [prefersDark, setPrefersDark] = useState(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
+  )
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = (e: MediaQueryListEvent) => setPrefersDark(e.matches)
+    mql.addEventListener('change', onChange)
+    return () => mql.removeEventListener('change', onChange)
+  }, [])
+  const appliedTheme = resolveTheme(settings.theme, prefersDark)
+
   useEffect(() => saveSettings(settings), [settings])
 
   useEffect(() => {
@@ -61,11 +73,11 @@ export default function App() {
   }, [lang])
 
   useEffect(() => {
-    document.documentElement.dataset.theme = settings.theme
+    document.documentElement.dataset.theme = appliedTheme
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', themeBg(settings.theme))
-  }, [settings.theme])
+      ?.setAttribute('content', themeBg(appliedTheme))
+  }, [appliedTheme])
 
   // Persist every change locally; mirror to the server only when the
   // played content changes (not every timer tick).
@@ -333,6 +345,16 @@ export default function App() {
         <div className="control-row">
           <span className="label">{tr('background')}</span>
           <div role="group" className="theme-row">
+            <button
+              className={
+                settings.theme === AUTO_THEME ? 'swatch auto-swatch active' : 'swatch auto-swatch'
+              }
+              aria-label="auto"
+              title="Auto"
+              onClick={() => setSettings({ ...settings, theme: AUTO_THEME })}
+            >
+              A
+            </button>
             {THEMES.map((th) => (
               <button
                 key={th.id}
