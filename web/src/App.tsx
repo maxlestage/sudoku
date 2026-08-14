@@ -424,6 +424,10 @@ export default function App() {
         </>
       )}
 
+      <footer className="credits">
+        {tr('credits')} <strong>Maxime Nathan Lestage</strong>
+      </footer>
+
       {showStats && <StatsModal stats={stats} tr={tr} onClose={() => setShowStats(false)} />}
       {showSaves && (
         <SavesModal

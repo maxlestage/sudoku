@@ -40,6 +40,7 @@ const fr: Dict = {
   noSaves: 'Aucune partie en attente',
   progress: 'Progression',
   savedAuto: 'La partie en cours est mise de côté automatiquement',
+  credits: 'Créé et développé par',
 }
 
 const es: Dict = {
@@ -78,6 +79,7 @@ const es: Dict = {
   noSaves: 'Ninguna partida pendiente',
   progress: 'Progreso',
   savedAuto: 'La partida en curso se guarda automáticamente',
+  credits: 'Creado y desarrollado por',
 }
 
 const en: Dict = {
@@ -116,6 +118,7 @@ const en: Dict = {
   noSaves: 'No games waiting',
   progress: 'Progress',
   savedAuto: 'The current game is set aside automatically',
+  credits: 'Created and developed by',
 }
 
 const dicts: Record<Lang, Dict> = { fr, es, en }

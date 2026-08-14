@@ -34,6 +34,9 @@ struct ContentView: View {
                     store.newGame()
                 }
                 .buttonStyle(.bordered)
+                Text("\(String(localized: "credits")) Maxime Nathan Lestage")
+                    .font(.caption2)
+                    .foregroundColor(store.theme.text.opacity(0.55))
             }
         }
         .padding(12)
