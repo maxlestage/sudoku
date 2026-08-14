@@ -1,5 +1,7 @@
 # Sudoku
 
+> Créé et développé par **Maxime Nathan Lestage**
+
 Sudokus aléatoires **4×4 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
 
 Fonctionnalités de jeu : **timer**, **statistiques** (parties, réussite, meilleurs temps), **mode notes** (crayon avec nettoyage automatique), **bouton indice**, **animations de victoire** (confettis) et écran **« reprendre une partie »** multi-sauvegardes (la partie en cours est mise de côté automatiquement quand on en lance une autre).

@@ -631,7 +631,18 @@ body,
 
 .new-game {
   margin-top: auto;
-  margin-bottom: 0.5rem;
+}
+
+.credits {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.credits strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .win {
