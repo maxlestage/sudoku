@@ -25,7 +25,6 @@ pub struct Puzzle {
 pub fn box_dims(size: usize) -> Option<(usize, usize)> {
     match size {
         4 => Some((2, 2)),
-        6 => Some((2, 3)),
         9 => Some((3, 3)),
         _ => None,
     }
@@ -204,7 +203,7 @@ mod tests {
 
     #[test]
     fn generates_all_sizes() {
-        for &size in &[4usize, 6, 9] {
+        for &size in &[4usize, 9] {
             for &d in &[Difficulty::Easy, Difficulty::Medium, Difficulty::Hard] {
                 let p = generate(size, d).expect("puzzle");
                 assert_eq!(p.puzzle.len(), size);
@@ -229,5 +228,6 @@ mod tests {
     fn rejects_bad_size() {
         assert!(generate(3, Difficulty::Easy).is_none());
         assert!(generate(5, Difficulty::Easy).is_none());
+        assert!(generate(6, Difficulty::Easy).is_none());
     }
 }

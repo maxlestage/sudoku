@@ -14,14 +14,13 @@ enum Difficulty: String, Codable, CaseIterable, Identifiable {
 }
 
 enum GridSize: Int, Codable, CaseIterable, Identifiable {
-    case four = 4, six = 6, nine = 9
+    case four = 4, nine = 9
     var id: Int { rawValue }
 
     /// Box dimensions (rows, cols).
     var boxDims: (rows: Int, cols: Int) {
         switch self {
         case .four: return (2, 2)
-        case .six: return (2, 3)
         case .nine: return (3, 3)
         }
     }
