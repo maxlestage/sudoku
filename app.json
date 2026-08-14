@@ -1,6 +1,6 @@
 {
   "name": "sudoku",
-  "description": "Random sudoku (4×4, 6×6, 9×9) with digits or colors — React web + Rust/Axum/SeaORM/SQLite backend",
+  "description": "Random sudoku (4×4, 9×9) with digits or colors — React web + Rust/Axum/SeaORM/SQLite backend",
   "buildpacks": [
     { "url": "heroku/nodejs" },
     { "url": "emk/rust" }
