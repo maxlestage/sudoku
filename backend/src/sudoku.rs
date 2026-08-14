@@ -113,7 +113,7 @@ impl Grid {
             if cands.is_empty() {
                 return 0;
             }
-            if best.as_ref().map_or(true, |(_, b)| cands.len() < b.len()) {
+            if best.as_ref().is_none_or(|(_, b)| cands.len() < b.len()) {
                 let single = cands.len() == 1;
                 best = Some((i, cands));
                 if single {
