@@ -2,6 +2,8 @@
 
 Sudokus aléatoires **3×3, 6×6 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
 
+Fonctionnalités de jeu : **timer**, **statistiques** (parties, réussite, meilleurs temps), **mode notes** (crayon avec nettoyage automatique), **bouton indice**, **animations de victoire** (confettis) et écran **« reprendre une partie »** multi-sauvegardes (la partie en cours est mise de côté automatiquement quand on en lance une autre).
+
 - **`web/`** — Site React (Vite + TypeScript), **mobile-first**, trilingue **FR / ES / EN**, **PWA installable** (service worker, hors-ligne, icônes). **12 thèmes de fond** (dont 3 clairs) changeables à tout moment. La partie en cours et les préférences sont persistées en **localStorage** : le dyno Heroku peut redémarrer, rien n'est perdu côté joueur.
 - **`backend/`** — API **Rust + Axum + SeaORM + SQLite** : génération de grilles (solution unique garantie) et sauvegarde des parties (iOS ou web). Sert aussi le build du site.
 - **`ios/`** — Application **native iOS (SwiftUI)**, localisée FR / ES / EN, générateur embarqué + synchronisation avec l'API.
