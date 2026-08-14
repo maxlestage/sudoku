@@ -37,7 +37,14 @@ struct ContentView: View {
             }
         }
         .padding(12)
-        .background(store.theme.bg.ignoresSafeArea())
+        .background(
+            LinearGradient(
+                colors: [store.theme.surface, store.theme.bg, store.theme.bg],
+                startPoint: .topLeading,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
         .tint(store.theme.accent)
         .preferredColorScheme(store.theme.isLight ? .light : .dark)
         .sheet(isPresented: $showStats) { StatsSheet() }

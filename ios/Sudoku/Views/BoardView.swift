@@ -45,9 +45,11 @@ struct BoardView: View {
                 }
             }
             .frame(width: side, height: side)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
-                Rectangle().stroke(store.theme.boxBorder, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 12).stroke(store.theme.boxBorder, lineWidth: 2)
             )
+            .shadow(color: .black.opacity(0.35), radius: 14, y: 8)
             .frame(maxWidth: .infinity)
         }
         .aspectRatio(1, contentMode: .fit)

@@ -43,6 +43,7 @@ export default function App() {
   const [stats, setStats] = useState<Stats>(() => loadStats())
   const [selected, setSelected] = useState<[number, number] | null>(null)
   const [notesMode, setNotesMode] = useState(false)
+  const [lastSet, setLastSet] = useState<string | null>(null)
   const [showStats, setShowStats] = useState(false)
   const [showSaves, setShowSaves] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -184,6 +185,7 @@ export default function App() {
         return
       }
       const next = game.entries[r][c] === value ? 0 : value
+      if (next !== 0) setLastSet(`${r}-${c}-${Date.now()}`)
       setGame(applyValue(game, r, c, next))
     },
     [game, selected, notesMode, applyValue],
@@ -220,6 +222,7 @@ export default function App() {
     }
     const [r, c] = target
     setSelected(target)
+    setLastSet(`${r}-${c}-${Date.now()}`)
     const next = applyValue(game, r, c, game.puzzle.solution[r][c])
     setGame({ ...next, hintsUsed: next.hintsUsed + 1 })
   }, [game, selected, applyValue])
@@ -372,6 +375,7 @@ export default function App() {
             mode={settings.displayMode}
             selected={selected}
             conflicts={conflicts}
+            lastSet={lastSet}
             onSelect={(r, c) => setSelected([r, c])}
           />
           {game.finished ? (
@@ -469,13 +473,24 @@ interface BoardProps {
   mode: DisplayMode
   selected: [number, number] | null
   conflicts: boolean[][]
+  lastSet: string | null
   onSelect: (r: number, c: number) => void
 }
 
-function Board({ game, mode, selected, conflicts, onSelect }: BoardProps) {
+function Board({ game, mode, selected, conflicts, lastSet, onSelect }: BoardProps) {
   const n = game.puzzle.size
   const { box_rows: br, box_cols: bc } = game.puzzle
   const selValue = selected ? game.entries[selected[0]][selected[1]] : 0
+
+  const isPeer = (r: number, c: number): boolean => {
+    if (!selected) return false
+    const [sr, sc] = selected
+    if (sr === r && sc === c) return false
+    if (sr === r || sc === c) return true
+    return (
+      Math.floor(sr / br) === Math.floor(r / br) && Math.floor(sc / bc) === Math.floor(c / bc)
+    )
+  }
 
   return (
     <div
@@ -489,12 +504,15 @@ function Board({ game, mode, selected, conflicts, onSelect }: BoardProps) {
           const isSel = selected?.[0] === r && selected?.[1] === c
           const sameValue = v !== 0 && v === selValue && !isSel
           const cellNotes = game.notes[r][c]
+          const popped = lastSet !== null && lastSet.startsWith(`${r}-${c}-`)
           const classes = [
             'cell',
             given ? 'given' : '',
             isSel ? 'selected' : '',
             sameValue ? 'same' : '',
+            !isSel && !sameValue && isPeer(r, c) ? 'peer' : '',
             conflicts[r]?.[c] ? 'conflict' : '',
+            popped ? 'pop' : '',
             bc > 1 && c % bc === 0 ? 'box-left' : '',
             br > 1 && r % br === 0 ? 'box-top' : '',
             c === n - 1 ? 'box-right' : '',
@@ -504,7 +522,7 @@ function Board({ game, mode, selected, conflicts, onSelect }: BoardProps) {
             .join(' ')
           return (
             <button
-              key={`${r}-${c}`}
+              key={popped ? `p-${lastSet}` : `${r}-${c}`}
               className={classes}
               style={{ ['--i' as string]: r * n + c }}
               onClick={() => onSelect(r, c)}
