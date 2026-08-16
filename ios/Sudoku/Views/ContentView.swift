@@ -8,36 +8,37 @@ struct ContentView: View {
     @State private var showSettings = false
 
     var body: some View {
-        VStack(spacing: 10) {
-            header
+        GeometryReader { root in
+            VStack(spacing: 10) {
+                header
 
-            if store.loading || store.game == nil {
-                Spacer()
-                ProgressView(String(localized: "loading"))
-                Spacer()
-            } else if let game = store.game {
-                gameBar(game)
+                if store.loading || store.game == nil {
+                    Spacer()
+                    ProgressView(String(localized: "loading"))
+                    Spacer()
+                } else if let game = store.game {
+                    gameBar(game)
 
-                ZStack {
-                    BoardView(game: game)
-                    if game.finished {
-                        ConfettiView()
-                            .allowsHitTesting(false)
+                    ZStack {
+                        BoardView(game: game, side: boardSide(root.size, game: game))
+                        if game.finished {
+                            ConfettiView()
+                                .allowsHitTesting(false)
+                        }
                     }
-                }
-                // The board is the star: give it the leftover space.
-                .layoutPriority(1)
 
-                if game.finished {
-                    winBanner(game)
-                } else {
-                    KeypadView(size: game.puzzle.size)
-                    actionsRow
-                }
+                    if game.finished {
+                        winBanner(game)
+                    } else {
+                        KeypadView(size: game.puzzle.size)
+                        actionsRow
+                    }
 
-                Spacer(minLength: 0)
-                footer
+                    Spacer(minLength: 0)
+                    footer
+                }
             }
+            .frame(width: root.size.width, height: root.size.height)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
@@ -60,6 +61,16 @@ struct ContentView: View {
         .sheet(isPresented: $showStats) { StatsSheet() }
         .sheet(isPresented: $showSaves) { SavesSheet() }
         .sheet(isPresented: $showSettings) { SettingsSheet() }
+    }
+
+    /// Explicit board size: as wide as the screen allows, capped so the
+    /// keypad, actions and footer still fit underneath on small phones.
+    private func boardSide(_ available: CGSize, game: GameState) -> CGFloat {
+        // header + game bar + keypad rows + actions + new game + credits + spacings
+        let keypadRows: CGFloat = game.puzzle.size <= 4 ? 1 : 2
+        let reserved: CGFloat = 210 + keypadRows * 52
+        let byHeight = available.height - reserved
+        return max(240, min(available.width, byHeight))
     }
 
     private var header: some View {
