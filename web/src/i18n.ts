@@ -41,6 +41,7 @@ const fr: Dict = {
   progress: 'Progression',
   savedAuto: 'La partie en cours est mise de côté automatiquement',
   credits: 'Créé et développé par',
+  settings: 'Paramètres',
 }
 
 const es: Dict = {
@@ -80,6 +81,7 @@ const es: Dict = {
   progress: 'Progreso',
   savedAuto: 'La partida en curso se guarda automáticamente',
   credits: 'Creado y desarrollado por',
+  settings: 'Ajustes',
 }
 
 const en: Dict = {
@@ -119,6 +121,7 @@ const en: Dict = {
   progress: 'Progress',
   savedAuto: 'The current game is set aside automatically',
   credits: 'Created and developed by',
+  settings: 'Settings',
 }
 
 const dicts: Record<Lang, Dict> = { fr, es, en }
