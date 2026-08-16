@@ -46,6 +46,7 @@ export default function App() {
   const [lastSet, setLastSet] = useState<string | null>(null)
   const [showStats, setShowStats] = useState(false)
   const [showSaves, setShowSaves] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [loading, setLoading] = useState(false)
   const newGameRef = useRef(false)
   const syncKeyRef = useRef('')
@@ -293,94 +294,15 @@ export default function App() {
             📂
             {saves.length > 0 && <span className="badge">{saves.length}</span>}
           </button>
-          <div className="lang-switch" role="group" aria-label={tr('language')}>
-            {LANGS.map((l) => (
-              <button
-                key={l}
-                className={l === lang ? 'chip active' : 'chip'}
-                onClick={() => setSettings({ ...settings, lang: l })}
-              >
-                {l.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <button
+            className="icon-btn settings-btn"
+            aria-label={tr('settings')}
+            onClick={() => setShowSettings(true)}
+          >
+            ⚙️
+          </button>
         </div>
       </header>
-
-      <section className="controls">
-        <div className="control-row">
-          <span className="label">{tr('size')}</span>
-          <div role="group">
-            {SIZES.map((s) => (
-              <button
-                key={s}
-                className={s === settings.size ? 'chip active' : 'chip'}
-                onClick={() => {
-                  setSettings({ ...settings, size: s })
-                  void startGame(s, settings.difficulty, game)
-                }}
-              >
-                {s}×{s}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="control-row">
-          <span className="label">{tr('difficulty')}</span>
-          <div role="group">
-            {DIFFICULTIES.map((d) => (
-              <button
-                key={d}
-                className={d === settings.difficulty ? 'chip active' : 'chip'}
-                onClick={() => {
-                  setSettings({ ...settings, difficulty: d })
-                  void startGame(settings.size, d, game)
-                }}
-              >
-                {tr(d)}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="control-row">
-          <span className="label">{tr('background')}</span>
-          <div role="group" className="theme-row">
-            <button
-              className={
-                settings.theme === AUTO_THEME ? 'swatch auto-swatch active' : 'swatch auto-swatch'
-              }
-              aria-label="auto"
-              title="Auto"
-              onClick={() => setSettings({ ...settings, theme: AUTO_THEME })}
-            >
-              A
-            </button>
-            {THEMES.map((th) => (
-              <button
-                key={th.id}
-                className={th.id === settings.theme ? 'swatch active' : 'swatch'}
-                style={{ background: th.bg }}
-                aria-label={th.id}
-                onClick={() => setSettings({ ...settings, theme: th.id })}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="control-row">
-          <span className="label">{tr('display')}</span>
-          <div role="group">
-            {(['digits', 'colors'] as DisplayMode[]).map((m) => (
-              <button
-                key={m}
-                className={m === settings.displayMode ? 'chip active' : 'chip'}
-                onClick={() => setSettings({ ...settings, displayMode: m })}
-              >
-                {tr(m)}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {loading || !game ? (
         <p className="status">{tr('loading')}</p>
@@ -389,6 +311,9 @@ export default function App() {
           <div className="game-bar">
             <span className="timer" aria-label={tr('time')}>
               ⏱ {formatTime(game.elapsedSeconds)}
+            </span>
+            <span className="game-meta">
+              {game.puzzle.size}×{game.puzzle.size} · {tr(game.puzzle.difficulty)}
             </span>
             {game.hintsUsed > 0 && <span className="hints-count">💡 {game.hintsUsed}</span>}
           </div>
@@ -450,6 +375,19 @@ export default function App() {
         {tr('credits')} <strong>Maxime Nathan Lestage</strong>
       </footer>
 
+      {showSettings && (
+        <SettingsModal
+          settings={settings}
+          lang={lang}
+          tr={tr}
+          onChange={setSettings}
+          onNewGame={(size, difficulty) => {
+            void startGame(size, difficulty, game)
+            setShowSettings(false)
+          }}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
       {showStats && <StatsModal stats={stats} tr={tr} onClose={() => setShowStats(false)} />}
       {showSaves && (
         <SavesModal
@@ -642,6 +580,120 @@ function Confetti() {
         />
       ))}
     </div>
+  )
+}
+
+interface SettingsModalProps {
+  settings: Settings
+  lang: Lang
+  tr: (k: string) => string
+  onChange: (s: Settings) => void
+  onNewGame: (size: Size, difficulty: Difficulty) => void
+  onClose: () => void
+}
+
+/** Every game option lives here so the main screen stays focused on the board. */
+function SettingsModal({
+  settings,
+  lang,
+  tr,
+  onChange,
+  onNewGame,
+  onClose,
+}: SettingsModalProps) {
+  return (
+    <Modal title={`⚙️ ${tr('settings')}`} tr={tr} onClose={onClose}>
+      <div className="settings-group">
+        <span className="label">{tr('size')}</span>
+        <div role="group">
+          {SIZES.map((s) => (
+            <button
+              key={s}
+              className={s === settings.size ? 'chip active' : 'chip'}
+              onClick={() => {
+                onChange({ ...settings, size: s })
+                onNewGame(s, settings.difficulty)
+              }}
+            >
+              {s}×{s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <span className="label">{tr('difficulty')}</span>
+        <div role="group">
+          {DIFFICULTIES.map((d) => (
+            <button
+              key={d}
+              className={d === settings.difficulty ? 'chip active' : 'chip'}
+              onClick={() => {
+                onChange({ ...settings, difficulty: d })
+                onNewGame(settings.size, d)
+              }}
+            >
+              {tr(d)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <span className="label">{tr('display')}</span>
+        <div role="group">
+          {(['digits', 'colors'] as DisplayMode[]).map((m) => (
+            <button
+              key={m}
+              className={m === settings.displayMode ? 'chip active' : 'chip'}
+              onClick={() => onChange({ ...settings, displayMode: m })}
+            >
+              {tr(m)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <span className="label">{tr('background')}</span>
+        <div role="group" className="theme-row">
+          <button
+            className={
+              settings.theme === AUTO_THEME ? 'swatch auto-swatch active' : 'swatch auto-swatch'
+            }
+            aria-label="auto"
+            title="Auto"
+            onClick={() => onChange({ ...settings, theme: AUTO_THEME })}
+          >
+            A
+          </button>
+          {THEMES.map((th) => (
+            <button
+              key={th.id}
+              className={th.id === settings.theme ? 'swatch active' : 'swatch'}
+              style={{ background: th.bg }}
+              aria-label={th.id}
+              onClick={() => onChange({ ...settings, theme: th.id })}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="settings-group">
+        <span className="label">{tr('language')}</span>
+        <div role="group" className="lang-switch">
+          {LANGS.map((l) => (
+            <button
+              key={l}
+              className={l === lang ? 'chip active' : 'chip'}
+              onClick={() => onChange({ ...settings, lang: l })}
+            >
+              {l.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+    </Modal>
   )
 }
 

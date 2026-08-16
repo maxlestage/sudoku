@@ -5,18 +5,19 @@ struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var showStats = false
     @State private var showSaves = false
+    @State private var showSettings = false
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             header
-            themeRow
-            controls
+
             if store.loading || store.game == nil {
                 Spacer()
                 ProgressView(String(localized: "loading"))
                 Spacer()
             } else if let game = store.game {
                 gameBar(game)
+
                 ZStack {
                     BoardView(game: game)
                     if game.finished {
@@ -24,23 +25,22 @@ struct ContentView: View {
                             .allowsHitTesting(false)
                     }
                 }
+                // The board is the star: give it the leftover space.
+                .layoutPriority(1)
+
                 if game.finished {
                     winBanner(game)
                 } else {
                     KeypadView(size: game.puzzle.size)
                     actionsRow
                 }
+
                 Spacer(minLength: 0)
-                Button(String(localized: "new_game")) {
-                    store.newGame()
-                }
-                .buttonStyle(.bordered)
-                Text("\(String(localized: "credits")) Maxime Nathan Lestage")
-                    .font(.caption2)
-                    .foregroundColor(store.theme.text.opacity(0.55))
+                footer
             }
         }
-        .padding(12)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
         .background(
             LinearGradient(
                 colors: [store.theme.surface, store.theme.bg, store.theme.bg],
@@ -59,6 +59,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showStats) { StatsSheet() }
         .sheet(isPresented: $showSaves) { SavesSheet() }
+        .sheet(isPresented: $showSettings) { SettingsSheet() }
     }
 
     private var header: some View {
@@ -67,74 +68,87 @@ struct ContentView: View {
                 .font(.title2.bold())
                 .foregroundColor(store.theme.text)
             Spacer()
-            Button {
-                showStats = true
-            } label: {
-                Image(systemName: "chart.bar.fill")
-            }
-            .buttonStyle(.bordered)
-            Button {
+            iconButton("chart.bar.fill", label: "stats") { showStats = true }
+            iconButton("folder.fill", label: "saves", badge: store.saves.count) {
                 showSaves = true
-            } label: {
-                Image(systemName: "folder.fill")
-                    .overlay(alignment: .topTrailing) {
-                        if !store.saves.isEmpty {
-                            Text("\(store.saves.count)")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(3)
-                                .background(Circle().fill(store.theme.accent))
-                                .offset(x: 10, y: -10)
-                        }
-                    }
             }
-            .buttonStyle(.bordered)
+            iconButton("gearshape.fill", label: "settings") { showSettings = true }
         }
+    }
+
+    private func iconButton(
+        _ systemName: String,
+        label: String,
+        badge: Int = 0,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .frame(width: 22, height: 22)
+                .overlay(alignment: .topTrailing) {
+                    if badge > 0 {
+                        Text("\(badge)")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(3)
+                            .background(Circle().fill(store.theme.accent))
+                            .offset(x: 10, y: -10)
+                    }
+                }
+        }
+        .buttonStyle(.bordered)
+        .accessibilityLabel(String(localized: String.LocalizationValue(label)))
     }
 
     private func gameBar(_ game: GameState) -> some View {
         HStack {
             Label(formatTime(game.elapsedSeconds), systemImage: "timer")
                 .font(.subheadline.weight(.semibold).monospacedDigit())
-                .foregroundColor(store.theme.text.opacity(0.7))
+                .foregroundColor(store.theme.text.opacity(0.75))
             Spacer()
+            Text("\(game.puzzle.size)×\(game.puzzle.size) · \(String(localized: String.LocalizationValue(game.puzzle.difficulty.rawValue)))")
+                .font(.caption)
+                .foregroundColor(store.theme.text.opacity(0.55))
             if game.hintsUsed > 0 {
                 Label("\(game.hintsUsed)", systemImage: "lightbulb.fill")
                     .font(.subheadline)
-                    .foregroundColor(store.theme.text.opacity(0.7))
+                    .foregroundColor(store.theme.text.opacity(0.75))
             }
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 2)
     }
 
     private var actionsRow: some View {
         HStack(spacing: 8) {
-            Button {
+            actionButton("pencil", "notes", active: store.notesMode) {
                 store.notesMode.toggle()
-            } label: {
-                Label(String(localized: "notes"), systemImage: "pencil")
-                    .frame(maxWidth: .infinity, minHeight: 40)
             }
-            .buttonStyle(.bordered)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(store.notesMode ? store.theme.accent.opacity(0.35) : .clear)
-            )
-            Button {
-                store.hint()
-            } label: {
-                Label(String(localized: "hint"), systemImage: "lightbulb")
-                    .frame(maxWidth: .infinity, minHeight: 40)
-            }
-            .buttonStyle(.bordered)
-            Button {
-                store.erase()
-            } label: {
-                Label(String(localized: "erase"), systemImage: "delete.left")
-                    .frame(maxWidth: .infinity, minHeight: 40)
-            }
-            .buttonStyle(.bordered)
+            actionButton("lightbulb", "hint") { store.hint() }
+            actionButton("delete.left", "erase") { store.erase() }
         }
+    }
+
+    private func actionButton(
+        _ systemName: String,
+        _ key: String,
+        active: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Image(systemName: systemName)
+                Text(String(localized: String.LocalizationValue(key)))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity, minHeight: 42)
+        }
+        .buttonStyle(.bordered)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(active ? store.theme.accent.opacity(0.35) : .clear)
+        )
     }
 
     private func winBanner(_ game: GameState) -> some View {
@@ -161,87 +175,119 @@ struct ContentView: View {
         .transition(.scale.combined(with: .opacity))
     }
 
-    private var themeRow: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(String(localized: "background"))
-                .font(.footnote)
-                .foregroundColor(store.theme.text.opacity(0.6))
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 30), spacing: 8)], spacing: 8) {
-                Button {
-                    store.themeChoice = "auto"
-                } label: {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: Color(hex: 0x1a1a2e), location: 0.5),
-                                    .init(color: Color(hex: 0xf2f2f7), location: 0.5),
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: 26, height: 26)
-                        .overlay(
-                            Text("A")
-                                .font(.system(size: 11, weight: .heavy))
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.85), radius: 2)
-                        )
-                        .overlay(
-                            Circle().stroke(
-                                store.themeChoice == "auto"
-                                    ? store.theme.accent
-                                    : store.theme.boxBorder.opacity(0.6),
-                                lineWidth: store.themeChoice == "auto" ? 3 : 1.5
-                            )
-                        )
-                }
-                .buttonStyle(.plain)
-                ForEach(AppTheme.all) { theme in
-                    Button {
-                        store.themeChoice = theme.id
-                    } label: {
-                        Circle()
-                            .fill(theme.bg)
-                            .frame(width: 26, height: 26)
-                            .overlay(
-                                Circle().stroke(
-                                    theme.id == store.themeChoice
-                                        ? store.theme.accent
-                                        : store.theme.boxBorder.opacity(0.6),
-                                    lineWidth: theme.id == store.themeChoice ? 3 : 1.5
-                                )
-                            )
+    private var footer: some View {
+        VStack(spacing: 6) {
+            Button(String(localized: "new_game")) {
+                store.newGame()
+            }
+            .buttonStyle(.bordered)
+            Text("\(String(localized: "credits")) Maxime Nathan Lestage")
+                .font(.caption2)
+                .foregroundColor(store.theme.text.opacity(0.5))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+    }
+}
+
+/// All game options live here so the main screen stays focused on the board.
+struct SettingsSheet: View {
+    @EnvironmentObject var store: GameStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(String(localized: "size")) {
+                    Picker(String(localized: "size"), selection: sizeBinding) {
+                        ForEach(GridSize.allCases) { size in
+                            Text("\(size.rawValue)×\(size.rawValue)").tag(size)
+                        }
                     }
-                    .buttonStyle(.plain)
+                    .pickerStyle(.segmented)
+                }
+                Section(String(localized: "difficulty")) {
+                    Picker(String(localized: "difficulty"), selection: difficultyBinding) {
+                        Text(String(localized: "easy")).tag(Difficulty.easy)
+                        Text(String(localized: "medium")).tag(Difficulty.medium)
+                        Text(String(localized: "hard")).tag(Difficulty.hard)
+                    }
+                    .pickerStyle(.segmented)
+                }
+                Section(String(localized: "display")) {
+                    Picker(String(localized: "display"), selection: displayBinding) {
+                        Text(String(localized: "digits")).tag(DisplayMode.digits)
+                        Text(String(localized: "colors")).tag(DisplayMode.colors)
+                    }
+                    .pickerStyle(.segmented)
+                }
+                Section(String(localized: "background")) {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 38), spacing: 10)],
+                        spacing: 10
+                    ) {
+                        autoSwatch
+                        ForEach(AppTheme.all) { theme in
+                            swatch(theme)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .navigationTitle(String(localized: "settings"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(String(localized: "close")) { dismiss() }
                 }
             }
         }
     }
 
-    private var controls: some View {
-        VStack(spacing: 8) {
-            Picker(String(localized: "size"), selection: sizeBinding) {
-                ForEach(GridSize.allCases) { size in
-                    Text("\(size.rawValue)×\(size.rawValue)").tag(size)
-                }
-            }
-            .pickerStyle(.segmented)
-
-            Picker(String(localized: "difficulty"), selection: difficultyBinding) {
-                Text(String(localized: "easy")).tag(Difficulty.easy)
-                Text(String(localized: "medium")).tag(Difficulty.medium)
-                Text(String(localized: "hard")).tag(Difficulty.hard)
-            }
-            .pickerStyle(.segmented)
-
-            Picker(String(localized: "display"), selection: displayBinding) {
-                Text(String(localized: "digits")).tag(DisplayMode.digits)
-                Text(String(localized: "colors")).tag(DisplayMode.colors)
-            }
-            .pickerStyle(.segmented)
+    private var autoSwatch: some View {
+        Button {
+            store.themeChoice = "auto"
+        } label: {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color(hex: 0x1a1a2e), location: 0.5),
+                            .init(color: Color(hex: 0xf2f2f7), location: 0.5),
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(width: 32, height: 32)
+                .overlay(
+                    Text("A")
+                        .font(.system(size: 13, weight: .heavy))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.85), radius: 2)
+                )
+                .overlay(selectionRing(active: store.themeChoice == "auto"))
         }
+        .buttonStyle(.plain)
+    }
+
+    private func swatch(_ theme: AppTheme) -> some View {
+        Button {
+            store.themeChoice = theme.id
+        } label: {
+            Circle()
+                .fill(theme.bg)
+                .frame(width: 32, height: 32)
+                .overlay(selectionRing(active: store.themeChoice == theme.id))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func selectionRing(active: Bool) -> some View {
+        Circle().stroke(
+            active ? store.theme.accent : store.theme.boxBorder.opacity(0.6),
+            lineWidth: active ? 3 : 1.5
+        )
     }
 
     private var displayBinding: Binding<DisplayMode> {
@@ -254,6 +300,7 @@ struct ContentView: View {
             set: {
                 store.gridSize = $0
                 store.newGame()
+                dismiss()
             }
         )
     }
@@ -264,6 +311,7 @@ struct ContentView: View {
             set: {
                 store.difficulty = $0
                 store.newGame()
+                dismiss()
             }
         )
     }
