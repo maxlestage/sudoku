@@ -4,7 +4,11 @@ struct KeypadView: View {
     @EnvironmentObject var store: GameStore
     let size: Int
 
-    private let columns = [GridItem(.adaptive(minimum: 52), spacing: 8)]
+    /// 4×4 fits on one row; 9×9 reads better as 5 + 4.
+    private var columns: [GridItem] {
+        let count = size == 4 ? 4 : 5
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: count)
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 8) {
@@ -16,13 +20,13 @@ struct KeypadView: View {
                         if store.displayMode == .colors {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(valueColors[v - 1])
-                                .frame(width: 28, height: 28)
+                                .frame(width: 26, height: 26)
                         } else {
                             Text("\(v)")
                                 .font(.title3.bold())
                         }
                     }
-                    .frame(maxWidth: .infinity, minHeight: 48)
+                    .frame(maxWidth: .infinity, minHeight: 44)
                 }
                 .buttonStyle(.bordered)
             }
