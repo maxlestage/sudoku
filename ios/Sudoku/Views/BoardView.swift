@@ -13,46 +13,48 @@ let valueColors: [Color] = [
     Color(red: 0.55, green: 0.43, blue: 0.39), // 9 brown
 ]
 
+/// The board is laid out at an explicit `side` computed by ContentView.
+/// A GeometryReader here would have no intrinsic size and would collapse to
+/// whatever vertical space the surrounding VStack had left over.
 struct BoardView: View {
     @EnvironmentObject var store: GameStore
     let game: GameState
+    let side: CGFloat
 
     var body: some View {
         let n = game.puzzle.size
+        let cell = side / CGFloat(n)
         let conflicts = store.conflicts()
-        GeometryReader { geo in
-            let side = min(geo.size.width, geo.size.height)
-            let cell = side / CGFloat(n)
-            VStack(spacing: 0) {
-                ForEach(0..<n, id: \.self) { r in
-                    HStack(spacing: 0) {
-                        ForEach(0..<n, id: \.self) { c in
-                            CellView(
-                                value: game.entries[r][c],
-                                notes: game.notes[r][c],
-                                given: game.puzzle.puzzle[r][c] != 0,
-                                selected: store.selected?.row == r && store.selected?.col == c,
-                                conflict: conflicts[r][c],
-                                sameAsSelected: isSameAsSelected(r: r, c: c),
-                                mode: store.displayMode,
-                                theme: store.theme,
-                                size: cell
-                            )
-                            .overlay(boxBorders(r: r, c: c, n: n))
-                            .onTapGesture { store.select(row: r, col: c) }
-                        }
+
+        VStack(spacing: 0) {
+            ForEach(0..<n, id: \.self) { r in
+                HStack(spacing: 0) {
+                    ForEach(0..<n, id: \.self) { c in
+                        CellView(
+                            value: game.entries[r][c],
+                            notes: game.notes[r][c],
+                            given: game.puzzle.puzzle[r][c] != 0,
+                            selected: store.selected?.row == r && store.selected?.col == c,
+                            conflict: conflicts[r][c],
+                            sameAsSelected: isSameAsSelected(r: r, c: c),
+                            peer: isPeer(r: r, c: c),
+                            mode: store.displayMode,
+                            theme: store.theme,
+                            size: cell
+                        )
+                        .overlay(boxBorders(r: r, c: c, cell: cell))
+                        .contentShape(Rectangle())
+                        .onTapGesture { store.select(row: r, col: c) }
                     }
                 }
             }
-            .frame(width: side, height: side)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12).stroke(store.theme.boxBorder, lineWidth: 2)
-            )
-            .shadow(color: .black.opacity(0.35), radius: 14, y: 8)
-            .frame(maxWidth: .infinity)
         }
-        .aspectRatio(1, contentMode: .fit)
+        .frame(width: side, height: side)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12).stroke(store.theme.boxBorder, lineWidth: 2)
+        )
+        .shadow(color: .black.opacity(0.35), radius: 14, y: 8)
     }
 
     private func isSameAsSelected(r: Int, c: Int) -> Bool {
@@ -61,22 +63,30 @@ struct BoardView: View {
         return selValue != 0 && game.entries[r][c] == selValue && !(sel.row == r && sel.col == c)
     }
 
-    private func boxBorders(r: Int, c: Int, n: Int) -> some View {
+    /// Same row, column or box as the selected cell — the crosshair highlight.
+    private func isPeer(r: Int, c: Int) -> Bool {
+        guard let sel = store.selected else { return false }
+        if sel.row == r && sel.col == c { return false }
+        if sel.row == r || sel.col == c { return true }
         let br = game.puzzle.boxRows
         let bc = game.puzzle.boxCols
-        return GeometryReader { geo in
-            Path { path in
-                if bc > 1 && c % bc == 0 {
-                    path.move(to: .zero)
-                    path.addLine(to: CGPoint(x: 0, y: geo.size.height))
-                }
-                if br > 1 && r % br == 0 {
-                    path.move(to: .zero)
-                    path.addLine(to: CGPoint(x: geo.size.width, y: 0))
-                }
+        return sel.row / br == r / br && sel.col / bc == c / bc
+    }
+
+    private func boxBorders(r: Int, c: Int, cell: CGFloat) -> some View {
+        let br = game.puzzle.boxRows
+        let bc = game.puzzle.boxCols
+        return Path { path in
+            if bc > 1 && c % bc == 0 {
+                path.move(to: .zero)
+                path.addLine(to: CGPoint(x: 0, y: cell))
             }
-            .stroke(store.theme.boxBorder, lineWidth: 2)
+            if br > 1 && r % br == 0 {
+                path.move(to: .zero)
+                path.addLine(to: CGPoint(x: cell, y: 0))
+            }
         }
+        .stroke(store.theme.boxBorder, lineWidth: 2)
         .allowsHitTesting(false)
     }
 }
@@ -88,6 +98,7 @@ struct CellView: View {
     let selected: Bool
     let conflict: Bool
     let sameAsSelected: Bool
+    let peer: Bool
     let mode: DisplayMode
     let theme: AppTheme
     let size: CGFloat
@@ -121,9 +132,7 @@ struct CellView: View {
 
     /// Pencil marks: a mini 3-column grid inside the cell.
     private var notesGrid: some View {
-        let cols = [GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0),
-                    GridItem(.flexible(), spacing: 0)]
+        let cols = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
         return LazyVGrid(columns: cols, spacing: 0) {
             ForEach(notes, id: \.self) { v in
                 if mode == .colors {
@@ -144,6 +153,8 @@ struct CellView: View {
         let base: Color = given ? theme.cellGiven : theme.cell
         return Rectangle()
             .fill(sameAsSelected ? theme.same : base)
+            // crosshair: tint the selected cell's row, column and box
+            .overlay(peer ? theme.accent.opacity(0.14) : Color.clear)
             .overlay(
                 Rectangle().stroke(selected ? theme.accent : .clear, lineWidth: 3)
             )
