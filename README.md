@@ -48,12 +48,16 @@ git push heroku main
 
 ## Application iOS
 
-Le projet Xcode est généré avec [XcodeGen](https://github.com/yonaskolb/XcodeGen) :
+Le projet Xcode (`ios/Sudoku.xcodeproj`) est **généré par [XcodeGen](https://github.com/yonaskolb/XcodeGen)** à partir de `ios/project.yml`, et committé : il s'ouvre directement.
 
 ```bash
-cd ios
-xcodegen generate
-open Sudoku.xcodeproj
+open ios/Sudoku.xcodeproj
+```
+
+Après ajout/suppression de fichiers Swift, regénérez-le :
+
+```bash
+cd ios && xcodegen generate
 ```
 
 Pointez le client API vers votre app Heroku : variable d'environnement `SUDOKU_API_URL` dans le scheme Xcode, ou éditez `baseURL` dans `ios/Sudoku/Models/APIClient.swift`. Sans réseau, l'app génère les grilles en local.
