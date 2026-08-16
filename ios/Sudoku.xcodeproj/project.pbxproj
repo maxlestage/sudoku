@@ -15,6 +15,7 @@
 		68CEDF5AFE674FAE9389F9FC /* KeypadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26ABA44CCE8819FD71EA5453 /* KeypadView.swift */; };
 		94BF07A7D5983F43DB2BD52E /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD69E1ECB71E6CE32CD44451 /* APIClient.swift */; };
 		96126409DC5576B21884D939 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC85C59B856E1CE1B701BEB8 /* Localizable.strings */; };
+		A9B92513897DBC01D21CD7EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5179F9DA06823C4CB8A8C0EA /* Assets.xcassets */; };
 		B463F4C229827901EA86A192 /* SudokuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1F7E4A124E1E6523353A9A /* SudokuApp.swift */; };
 		D40160CED22E15D6FE312DBC /* SudokuGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB35DD24D532082058C98CAD /* SudokuGenerator.swift */; };
 /* End PBXBuildFile section */
@@ -25,6 +26,7 @@
 		336003ADD5BA9ED5B4FCBACE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3D73D08439776FD6EB0855A6 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		4AA11A94D1DDDE6309DB7132 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5179F9DA06823C4CB8A8C0EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9367DC77F24463E3B92B5DF6 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		9D2C08852FFC14A8F2F45CED /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		A6F0F7156D2B8BACBBF4F52B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -40,6 +42,7 @@
 		729EBA42B7B5ECA296C24D19 /* Sudoku */ = {
 			isa = PBXGroup;
 			children = (
+				5179F9DA06823C4CB8A8C0EA /* Assets.xcassets */,
 				A6F0F7156D2B8BACBBF4F52B /* Info.plist */,
 				FC85C59B856E1CE1B701BEB8 /* Localizable.strings */,
 				FE1F7E4A124E1E6523353A9A /* SudokuApp.swift */,
@@ -145,6 +148,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9B92513897DBC01D21CD7EA /* Assets.xcassets in Resources */,
 				96126409DC5576B21884D939 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,10 +193,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				INFOPLIST_FILE = Sudoku/Info.plist;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -209,10 +211,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				INFOPLIST_FILE = Sudoku/Info.plist;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
