@@ -12,15 +12,22 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.maxlestage.sudoku
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "6"
+        CURRENT_PROJECT_VERSION: "7"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: Sudoku/Info.plist
       properties:
         CFBundleDisplayName: Sudoku
         CFBundleIconName: AppIcon
+        # Drive the version/build from the build settings above, otherwise
+        # XcodeGen bakes a literal "1" here and every upload looks like build 1.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleLocalizations: [fr, es, en]
-        UILaunchScreen: {}
+        # Static launch image: solid themed background so there is no white
+        # flash before the animated SplashView takes over.
+        UILaunchScreen:
+          UIColorName: LaunchBackground
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:

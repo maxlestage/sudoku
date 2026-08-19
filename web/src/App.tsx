@@ -80,6 +80,26 @@ export default function App() {
       ?.setAttribute('content', themeBg(appliedTheme))
   }, [appliedTheme])
 
+  // The splash markup is inlined in index.html so it paints before the
+  // bundle loads; translate its caption and dismiss it once we can play.
+  useEffect(() => {
+    const caption = document.querySelector('[data-splash-credits]')
+    if (caption) caption.textContent = tr('credits')
+  }, [tr])
+
+  useEffect(() => {
+    if (loading || !game) return
+    const splash = document.getElementById('splash')
+    if (!splash) return
+    // keep it on screen long enough for the animation to land
+    const wait = Math.max(0, 1400 - performance.now())
+    const timer = setTimeout(() => {
+      splash.classList.add('splash-hide')
+      setTimeout(() => splash.remove(), 500)
+    }, wait)
+    return () => clearTimeout(timer)
+  }, [loading, game])
+
   // Persist every change locally; mirror to the server only when the
   // played content changes (not every timer tick).
   useEffect(() => {
