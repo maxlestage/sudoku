@@ -40,7 +40,7 @@ const fr: Dict = {
   noSaves: 'Aucune partie en attente',
   progress: 'Progression',
   savedAuto: 'La partie en cours est mise de côté automatiquement',
-  credits: 'Créé et développé par',
+  credits: 'Conçu et développé par',
   settings: 'Paramètres',
 }
 
@@ -80,7 +80,7 @@ const es: Dict = {
   noSaves: 'Ninguna partida pendiente',
   progress: 'Progreso',
   savedAuto: 'La partida en curso se guarda automáticamente',
-  credits: 'Creado y desarrollado por',
+  credits: 'Diseñado y desarrollado por',
   settings: 'Ajustes',
 }
 
@@ -120,7 +120,7 @@ const en: Dict = {
   noSaves: 'No games waiting',
   progress: 'Progress',
   savedAuto: 'The current game is set aside automatically',
-  credits: 'Created and developed by',
+  credits: 'Designed and developed by',
   settings: 'Settings',
 }
 
