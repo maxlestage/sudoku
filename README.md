@@ -1,6 +1,6 @@
 # Sudoku
 
-> Créé et développé par **Maxime Nathan Lestage**
+> Conçu et développé par **Maxime Nathan Lestage**
 
 Sudokus aléatoires **4×4 et 9×9**, affichés en **chiffres ou en couleurs** (changeable à tout moment, autant de fois qu'on veut).
 
